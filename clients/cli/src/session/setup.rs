@@ -118,7 +118,7 @@ pub async fn setup_session(
     let max_workers = total_cores;
     let mut num_workers: usize = max_threads.unwrap_or(1).clamp(1, max_workers as u32) as usize;
     
-    if (FALSE) {
+    if (false) {
         // Check memory and clamp threads if max-threads was explicitly set OR check-memory flag is set
         if max_threads.is_some() || check_mem {
             let memory_clamped_workers = clamp_threads_by_memory(num_workers);
