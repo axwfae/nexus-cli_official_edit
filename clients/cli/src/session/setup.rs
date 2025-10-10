@@ -112,7 +112,12 @@ pub async fn setup_session(
     // Create orchestrator client
     let orchestrator_client = OrchestratorClient::new(env.clone());
 
-    let num_workers: usize = max_threads.unwrap_or(1) as usize;    
+    // Clamp the number of workers to [1, 75% of num_cores]. Leave room for other processes.
+    let total_cores = crate::system::num_cores();
+    let max_workers = ((total_cores).ceil() as usize).max(1);
+    let mut num_workers: usize = max_threads.unwrap_or(1).clamp(1, max_workers as u32) as usize;
+    
+    //let num_workers: usize = max_threads.unwrap_or(1) as usize;    
     
     // Create shutdown channel - only one shutdown signal needed
     let (shutdown_sender, _) = broadcast::channel(1);
