@@ -112,13 +112,13 @@ pub async fn setup_session(
     // Create orchestrator client
     let orchestrator_client = OrchestratorClient::new(env.clone());
 
-    if (FALSE) {
-        // Clamp the number of workers to [1, 75% of num_cores]. Leave room for other processes.
-        let total_cores = crate::system::num_cores();
-        //    let max_workers = ((total_cores as f64 * 0.75).ceil() as usize).max(1);
-        let max_workers = total_cores;
-        let mut num_workers: usize = max_threads.unwrap_or(1).clamp(1, max_workers as u32) as usize;
+    // Clamp the number of workers to [1, 75% of num_cores]. Leave room for other processes.
+    let total_cores = crate::system::num_cores();
+    //    let max_workers = ((total_cores as f64 * 0.75).ceil() as usize).max(1);
+    let max_workers = total_cores;
+    let mut num_workers: usize = max_threads.unwrap_or(1).clamp(1, max_workers as u32) as usize;
     
+    if (FALSE) {
         // Check memory and clamp threads if max-threads was explicitly set OR check-memory flag is set
         if max_threads.is_some() || check_mem {
             let memory_clamped_workers = clamp_threads_by_memory(num_workers);
@@ -137,10 +137,6 @@ pub async fn setup_session(
         if check_mem {
             warn_memory_configuration(Some(num_workers as u32));
         } 
-    }
-    else
-    {
-        let num_workers: usize = max_threads.unwrap_or(1) as usize;
     }
     
     // Create shutdown channel - only one shutdown signal needed
